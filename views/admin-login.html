@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Admin Login - SmashCourt</title>
+
+<link rel="stylesheet" href="/css/style.css">
+
+<style>
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    min-height: 100vh;
+}
+
+.navbar {
+    background: rgba(255, 255, 255, 0.95);
+    backface-visibility: blur(10px);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.login-wrap{
+    min-height: calc(100vh - 64px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+}
+
+.login-card{
+    width: 100%;
+    max-width: 450px;
+    background: white;
+    border-radius: 20px;
+    padding: 50px 40px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    animation: slideUp 0.6s ease-out;
+    position: relative;
+    overflow: hidden;
+}
+
+.login-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 5px;
+    background: linear-gradient(90deg, #10b981 0%, #059669 100%);
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.login-header{
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.login-icon{
+    font-size: 80px;
+    margin-bottom: 20px;
+    display: inline-block;
+    animation: bounce 0.6s ease-out;
+}
+
+@keyframes bounce {
+    0% {
+        transform: scale(0);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+.login-title{
+    font-family: var(--font-display);
+    font-size: 32px;
+    font-weight: 800;
+    color: #1f2937;
+    margin-bottom: 12px;
+    letter-spacing: -0.5px;
+}
+
+.login-sub{
+    color: #6b7280;
+    font-size: 15px;
+    line-height: 1.5;
+}
+
+.form-group{
+    margin-bottom: 24px;
+}
+
+.form-group label{
+    display: block;
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: #1f2937;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.form-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.form-icon {
+    position: absolute;
+    left: 16px;
+    font-size: 18px;
+    color: #9ca3af;
+    pointer-events: none;
+}
+
+.form-input{
+    width: 100%;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 14px 16px 14px 45px;
+    font-size: 15px;
+    outline: none;
+    transition: all 0.3s ease;
+    background: #f9fafb;
+    color: #1f2937;
+    font-weight: 500;
+}
+
+.form-input::placeholder {
+    color: #d1d5db;
+}
+
+.form-input:hover {
+    border-color: #d1d5db;
+    background: #ffffff;
+}
+
+.form-input:focus{
+    border-color: #10b981;
+    background: #ffffff;
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+}
+
+.login-btn{
+    width: 100%;
+    margin-top: 20px;
+    padding: 16px;
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+}
+
+.login-btn:hover {
+    background: linear-gradient(135deg, #059669 0%, #047857 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+}
+
+.login-btn:active {
+    transform: translateY(0);
+}
+
+.error-text{
+    text-align: center;
+    color: #dc2626;
+    margin-top: 20px;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 12px;
+    background: #fee2e2;
+    border-radius: 8px;
+    border-left: 4px solid #dc2626;
+    animation: shake 0.4s ease-in-out;
+}
+
+.error-text:empty {
+    display: none;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-10px); }
+    75% { transform: translateX(10px); }
+}
+
+.nav-link.active{
+    color: var(--green-deep);
+    font-weight: 700;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+    .login-card {
+        padding: 35px 25px;
+    }
+    
+    .login-title {
+        font-size: 28px;
+    }
+    
+    .login-icon {
+        font-size: 64px;
+    }
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<header class="navbar">
+    <div class="navbar-inner">
+
+        <div class="logo" onclick="window.location.href='/'">
+            <span class="logo-icon">🏸</span>
+            <span class="logo-text">
+                SmashCourt
+            </span>
+        </div>
+
+        <nav class="nav-links">
+
+            <a href="/" class="nav-link">
+                Lapangan
+            </a>
+
+            <a href="/history" class="nav-link">
+                History
+            </a>
+
+            <a href="/admin/login"
+            class="nav-link active">
+                Admin
+            </a>
+
+        </nav>
+
+    </div>
+</header>
+
+<!-- LOGIN -->
+<div class="login-wrap">
+
+    <div class="login-card">
+
+        <div class="login-header">
+
+            <h1 class="login-title">
+                Admin Login
+            </h1>
+
+            <p class="login-sub">
+                Login untuk mengakses dashboard admin
+            </p>
+
+        </div>
+
+        <div class="form-group">
+            <label>Email</label>
+            <div class="form-input-wrapper">
+                <input
+                type="email"
+                id="email"
+                class="form-input"
+                placeholder="Masukkan email"
+                autocomplete="off">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Password</label>
+            <div class="form-input-wrapper">
+                <input
+                type="password"
+                id="password"
+                class="form-input"
+                placeholder="Masukkan password"
+                autocomplete="off">
+            </div>
+        </div>
+
+        <button
+        class="btn-primary full-width login-btn"
+        id="loginBtn"
+        onclick="loginAdmin(this)">
+            Login Admin
+        </button>
+
+        <div id="error"
+        class="error-text">
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+function loginAdmin(btn){
+
+    const email =
+    document.getElementById(
+        "email"
+    ).value;
+
+    const password =
+    document.getElementById(
+        "password"
+    ).value;
+
+    const errorEl = document.getElementById("error");
+
+    if(!email || !password) {
+        errorEl.innerText = "Email dan password harus diisi";
+        return;
+    }
+
+    // Show loading state
+    const originalText = btn.innerText;
+    btn.innerText = "Sedang login...";
+    btn.disabled = true;
+
+    fetch("/api/admin/login", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            email: email,
+            password: password
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if(data.success) {
+            localStorage.setItem("isAdmin", "true");
+            localStorage.setItem("adminUser", JSON.stringify(data.admin));
+            window.location.href = "/admin";
+        } else {
+            errorEl.innerText = data.message || "Login gagal";
+            setTimeout(() => {
+                errorEl.innerText = '';
+            }, 3000);
+        }
+    })
+    .catch(err => {
+        console.error(err);
+        errorEl.innerText = "Error server, coba lagi";
+        setTimeout(() => {
+            errorEl.innerText = '';
+        }, 3000);
+    })
+    .finally(() => {
+        btn.innerText = originalText;
+        btn.disabled = false;
+    });
+}
+
+// Allow enter key to submit
+document.addEventListener('DOMContentLoaded', function() {
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+    
+    [emailInput, passwordInput].forEach(input => {
+        input.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                loginAdmin(document.getElementById('loginBtn'));
+            }
+        });
+    });
+});
+
+</script>
+
+</body>
+</html>

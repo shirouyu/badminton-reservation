@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Riwayat Booking</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .history-wrap h1 {
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+  <header class="navbar">
+    <div class="navbar-inner">
+      <div class="logo" onclick="goHome()">
+        <span class="logo-icon">🏸</span>
+        <span class="logo-text">SmashCourt</span>
+      </div>
+      <nav class="nav-links">
+        <a href="#" onclick="goHome()" class="nav-link">
+          Lapangan
+        </a>
+
+        <a href="/history" class="nav-link">
+          History
+        </a>
+
+        <a href="/admin-login" class="nav-link">
+          Login Admin
+        </a>
+
+        <button class="cart-btn" onclick="goToCart()">
+          <span class="cart-icon">🛒</span>
+          <span class="cart-badge" id="cartBadge">0</span>
+          Keranjang
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <div class="history-wrap">
+    <h1>Riwayat Booking</h1>
+
+    <div id="history"></div>
+  </div>
+
+<script>
+fetch("/api/payment")
+.then(res => res.json())
+.then(data => {
+
+    const history = document.getElementById("history");
+
+    if (!Array.isArray(data) || data.length === 0) {
+        history.innerHTML = "<p>Belum ada booking</p>";
+        return;
+    }
+
+    history.innerHTML = data.map(item => {
+
+        const total = item.total_harga
+            ? Number(item.total_harga).toLocaleString("id-ID")
+            : "0";
+
+        const tanggal = item.created_at
+            ? new Date(item.created_at).toLocaleString("id-ID")
+            : "-";
+
+        return `
+        <div class="history-card">
+            <div class="history-header">
+                <h3>Booking #${item.id}</h3>
+                <span class="badge">${item.metode_pembayaran || "-"}</span>
+            </div>
+
+            <div class="history-body">
+                <p>Total Pembayaran</p>
+                <h2>Rp ${total}</h2>
+            </div>
+
+            <div class="history-footer">
+                <small>${tanggal}</small>
+            </div>
+        </div>
+        `;
+    }).join("");
+
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1175 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Dashboard Admin - SmashCourt</title>
+
+<link rel="stylesheet" href="/css/style.css">
+
+<style>
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background: #f3f4f6;
+    min-height: 100vh;
+}
+
+.admin-wrap {
+    max-width: 1400px;
+    margin: auto;
+    padding: 24px;
+}
+
+.admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 32px;
+}
+
+.admin-title {
+    font-family: var(--font-display);
+    font-size: 28px;
+    font-weight: 800;
+    color: #1f2937;
+    margin: 0;
+}
+
+.admin-sub {
+    color: #6b7280;
+    font-size: 14px;
+    margin-top: 4px;
+}
+
+/* Stats Cards */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 20px;
+    margin-bottom: 32px;
+}
+
+.stat-card {
+    background: white;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    border: 1px solid #e5e7eb;
+    transition: transform 0.2s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+}
+
+.stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    margin-bottom: 16px;
+}
+
+.stat-icon.blue {
+    background: #dbeafe;
+}
+
+.stat-icon.yellow {
+    background: #fef3c7;
+}
+
+.stat-icon.green {
+    background: #d1fae5;
+}
+
+.stat-icon.purple {
+    background: #ede9fe;
+}
+
+.stat-label {
+    font-size: 13px;
+    color: #6b7280;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+}
+
+.stat-value {
+    font-size: 32px;
+    font-weight: 800;
+    color: #1f2937;
+}
+
+/* Admin Tabs */
+.admin-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 32px;
+    flex-wrap: wrap;
+}
+
+.admin-tab {
+    padding: 12px 24px;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    border: 1px solid #e5e7eb;
+    background: white;
+    color: #6b7280;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.admin-tab:hover {
+    background: #f9fafb;
+    color: #374151;
+}
+
+.admin-tab.active {
+    background: #10b981;
+    color: white;
+    border-color: #10b981;
+}
+
+/* Tab Content */
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* Bookings & Courts Sections */
+.bookings-section {
+    background: white;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    border: 1px solid #e5e7eb;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.section-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #1f2937;
+    margin: 0;
+}
+
+.filter-tabs {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.filter-tab {
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    border: 1px solid #e5e7eb;
+    background: white;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: #6b7280;
+}
+
+.filter-tab:hover {
+    background: #f9fafb;
+}
+
+.filter-tab.active {
+    background: #10b981;
+    color: white;
+    border-color: #10b981;
+}
+
+/* Table */
+.table-wrapper {
+    overflow-x: auto;
+}
+
+.booking-table,
+.court-table,
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.booking-table th,
+.court-table th,
+.admin-table th {
+    text-align: left;
+    padding: 12px 16px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid #e5e7eb;
+    background: #f9fafb;
+}
+
+.booking-table td,
+.court-table td,
+.admin-table td {
+    padding: 16px;
+    font-size: 14px;
+    color: #374151;
+    border-bottom: 1px solid #e5e7eb;
+    vertical-align: middle;
+}
+
+.booking-table tr:last-child td,
+.court-table tr:last-child td,
+.admin-table tr:last-child td {
+    border-bottom: none;
+}
+
+.booking-table tr:hover,
+.court-table tr:hover,
+.admin-table tr:hover {
+    background: #f9fafb;
+}
+
+/* Status Badge */
+.status-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.status-badge.pending {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.status-badge.lunas {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.status-badge.batal {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+/* Action Buttons */
+.action-btn {
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-right: 4px;
+}
+
+.action-btn.confirm {
+    background: #10b981;
+    color: white;
+}
+
+.action-btn.confirm:hover {
+    background: #059669;
+}
+
+.action-btn.cancel {
+    background: #ef4444;
+    color: white;
+}
+
+.action-btn.cancel:hover {
+    background: #dc2626;
+}
+
+.action-btn.delete {
+    background: #6b7280;
+    color: white;
+}
+
+.action-btn.delete:hover {
+    background: #4b5563;
+}
+
+.action-btn.edit {
+    background: #f59e0b;
+    color: white;
+}
+
+.action-btn.edit:hover {
+    background: #d97706;
+}
+
+/* Court Status */
+.court-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.court-status.available {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.court-status.full {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: currentColor;
+}
+
+.action-btn.delete-court {
+    background: #ef4444;
+    color: white;
+}
+
+.action-btn.delete-court:hover {
+    background: #dc2626;
+}
+
+/* Add Buttons */
+.btn-add {
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    background: #10b981;
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-add:hover {
+    background: #059669;
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: #9ca3af;
+}
+
+.empty-state-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+}
+
+.empty-state-text {
+    font-size: 16px;
+    font-weight: 500;
+}
+
+/* Loading */
+.loading {
+    text-align: center;
+    padding: 40px;
+    color: #6b7280;
+}
+
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid #e5e7eb;
+    border-top-color: #10b981;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin: 0 auto 16px;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Toast */
+.toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    padding: 16px 24px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    color: white;
+    background: #10b981;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    transform: translateY(100px);
+    opacity: 0;
+    transition: all 0.3s ease;
+    z-index: 1000;
+}
+
+.toast.show {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.toast.error {
+    background: #ef4444;
+}
+
+/* Modal Styles */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 20px;
+}
+
+.modal-overlay.show {
+    display: flex;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 16px;
+    width: 100%;
+    max-width: 480px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    animation: modalSlideIn 0.3s ease;
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 24px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.modal-header h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 700;
+    color: #1f2937;
+}
+
+.modal-close {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    border: none;
+    background: #f3f4f6;
+    color: #6b7280;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-close:hover {
+    background: #e5e7eb;
+    color: #1f2937;
+}
+
+.modal-body {
+    padding: 24px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 8px;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: border-color 0.2s ease;
+    box-sizing: border-box;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: #10b981;
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+}
+
+.form-group input::placeholder {
+    color: #9ca3af;
+}
+
+.form-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    margin-top: 24px;
+}
+
+.btn-cancel {
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    background: #f3f4f6;
+    color: #6b7280;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-cancel:hover {
+    background: #e5e7eb;
+    color: #1f2937;
+}
+
+.btn-submit {
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    background: #10b981;
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-submit:hover {
+    background: #059669;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .admin-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+    }
+
+    .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .filter-tabs {
+        width: 100%;
+        justify-content: flex-start;
+    }
+
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .booking-table th,
+    .booking-table td,
+    .court-table th,
+    .court-table td,
+    .admin-table th,
+    .admin-table td {
+        padding: 10px 12px;
+        font-size: 13px;
+    }
+}
+
+@media (max-width: 480px) {
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.nav-link.active {
+    color: var(--green-deep);
+    font-weight: 700;
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<header class="navbar">
+    <div class="navbar-inner">
+        <div class="logo" onclick="window.location.href='/'">
+            <span class="logo-icon">🏸</span>
+            <span class="logo-text">SmashCourt</span>
+        </div>
+
+        <nav class="nav-links">
+            <a href="/" class="nav-link">Lapangan</a>
+            <a href="/history" class="nav-link">History</a>
+            <a href="/admin" class="nav-link active">Admin</a>
+            <button class="cart-btn" onclick="logoutAdmin()">Logout</button>
+        </nav>
+    </div>
+</header>
+
+<!-- MAIN CONTENT -->
+<div class="admin-wrap">
+
+    <!-- Header -->
+    <div class="admin-header">
+        <div>
+            <h1 class="admin-title">Dashboard Admin</h1>
+            <p class="admin-sub">Overview SmashCourt</p>
+        </div>
+        <div id="adminInfo" class="admin-info">
+            <span id="adminName" class="admin-name"></span>
+        </div>
+    </div>
+
+    <!-- Stats Cards (always visible) -->
+    <div class="stats-grid" id="statsGrid">
+        <div class="stat-card">
+            <div class="stat-icon blue">📋</div>
+            <div class="stat-label">Total Booking</div>
+            <div class="stat-value" id="totalBookings">0</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon yellow">⏳</div>
+            <div class="stat-label">Pending</div>
+            <div class="stat-value" id="pendingBookings">0</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon green">✅</div>
+            <div class="stat-label">Lunas</div>
+            <div class="stat-value" id="confirmedBookings">0</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon purple">💰</div>
+            <div class="stat-label">Total Pendapatan</div>
+            <div class="stat-value" id="totalRevenue">Rp 0</div>
+        </div>
+    </div>
+
+    <!-- Admin Tabs -->
+    <div class="admin-tabs">
+        <button class="admin-tab active" onclick="switchTab('bookingTab')">📋 Kelola Booking</button>
+        <button class="admin-tab" onclick="switchTab('courtTab')">🏸 Kelola Lapangan</button>
+    </div>
+
+    <!-- TAB: Kelola Booking -->
+    <div class="tab-content active" id="bookingTab">
+        <div class="bookings-section">
+            <div class="section-header">
+                <h2 class="section-title">Daftar Booking</h2>
+                <div class="filter-tabs">
+                    <button class="filter-tab active" onclick="filterBookings('all')">Semua</button>
+                    <button class="filter-tab" onclick="filterBookings('Pending')">Pending</button>
+                    <button class="filter-tab" onclick="filterBookings('Lunas')">Lunas</button>
+                    <button class="filter-tab" onclick="filterBookings('Batal')">Batal</button>
+                </div>
+            </div>
+
+            <div class="table-wrapper" id="bookingsContainer">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>Memuat data...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB: Kelola Lapangan -->
+    <div class="tab-content" id="courtTab">
+        <div class="bookings-section">
+            <div class="section-header">
+                <h2 class="section-title">Manajemen Lapangan</h2>
+                <button class="btn-add" onclick="showAddCourtModal()">+ Tambah Lapangan</button>
+            </div>
+
+            <div class="table-wrapper" id="courtsContainer">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>Memuat data lapangan...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+<!-- Toast Notification -->
+<div class="toast" id="toast"></div>
+
+<!-- Modal: Add/Edit Court -->
+<div class="modal-overlay" id="addCourtModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Tambah Lapangan Baru</h3>
+            <button class="modal-close" onclick="closeModal('addCourtModal')">✕</button>
+        </div>
+        <form id="addCourtForm" onsubmit="addCourt(event)">
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="courtName">Nama Lapangan</label>
+                    <input type="text" id="courtName" placeholder="Contoh: Lapangan 1" required>
+                </div>
+                <div class="form-group">
+                    <label for="courtLocation">Lokasi</label>
+                    <input type="text" id="courtLocation" placeholder="Contoh: Gedung A, Lantai 2" required>
+                </div>
+                <div class="form-group">
+                    <label for="courtPrice">Harga per Jam (Rp)</label>
+                    <input type="number" id="courtPrice" placeholder="Contoh: 150000" required>
+                </div>
+                <div class="form-group">
+                    <label for="courtImage">Gambar Lapangan (opsional)</label>
+                    <input type="file" id="courtImage" accept="image/*">
+                </div>
+            </div>
+            <div class="form-actions">
+                <button type="button" class="btn-cancel" onclick="closeModal('addCourtModal')">Batal</button>
+                <button type="submit" class="btn-submit">Tambah Lapangan</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+
+// Check authentication
+if (localStorage.getItem("isAdmin") !== "true") {
+    window.location.href = "/admin/login";
+}
+
+// Display admin info
+const adminUser = JSON.parse(localStorage.getItem("adminUser") || "{}");
+if (adminUser.username) {
+    document.getElementById("adminName").textContent = adminUser.username;
+}
+
+// Tab switching
+function switchTab(tabId) {
+    document.querySelectorAll('.admin-tab').forEach(btn => btn.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+    const tabBtn = Array.from(document.querySelectorAll('.admin-tab')).find(btn => btn.getAttribute('onclick').includes(tabId));
+    if (tabBtn) tabBtn.classList.add('active');
+
+    document.getElementById(tabId).classList.add('active');
+}
+
+// Current filter
+let currentFilter = 'all';
+let allBookings = [];
+
+// Load all data on page load
+document.addEventListener('DOMContentLoaded', function() {
+    loadStats();
+    loadBookings();
+    loadCourts();
+});
+
+// ============================
+// STATISTICS
+// ============================
+
+function loadStats() {
+    fetch('/api/admin/stats')
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                document.getElementById('totalBookings').textContent = data.stats.totalBookings;
+                document.getElementById('pendingBookings').textContent = data.stats.pendingBookings;
+                document.getElementById('confirmedBookings').textContent = data.stats.confirmedBookings;
+                document.getElementById('totalRevenue').textContent = 'Rp ' + formatNumber(data.stats.totalRevenue);
+            }
+        })
+        .catch(err => console.error('Error loading stats:', err));
+}
+
+// ============================
+// BOOKINGS
+// ============================
+
+function loadBookings() {
+    fetch('/api/admin/bookings')
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                allBookings = data.bookings;
+                renderBookings();
+            }
+        })
+        .catch(err => {
+            console.error('Error loading bookings:', err);
+            document.getElementById('bookingsContainer').innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-state-icon">⚠️</div>
+                    <div class="empty-state-text">Gagal memuat data</div>
+                </div>
+            `;
+        });
+}
+
+function filterBookings(status) {
+    currentFilter = status;
+
+    document.querySelectorAll('.filter-tab').forEach(tab => {
+        tab.classList.remove('active');
+        const text = tab.textContent.trim().toLowerCase();
+        if ((status === 'all' && text === 'semua') ||
+            (status === 'Pending' && text === 'pending') ||
+            (status === 'Lunas' && text === 'lunas') ||
+            (status === 'Batal' && text === 'batal')) {
+            tab.classList.add('active');
+        }
+    });
+
+    renderBookings();
+}
+
+function renderBookings() {
+    const container = document.getElementById('bookingsContainer');
+    let filtered = allBookings;
+
+    if (currentFilter !== 'all') {
+        filtered = allBookings.filter(b => b.status === currentFilter);
+    }
+
+    if (filtered.length === 0) {
+        container.innerHTML = `
+            <div class="empty-state">
+                <div class="empty-state-icon">📭</div>
+                <div class="empty-state-text">Tidak ada booking</div>
+            </div>
+        `;
+        return;
+    }
+
+    let html = `
+        <table class="booking-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Pemesan</th>
+                    <th>Lapangan</th>
+                    <th>Tanggal & Jam</th>
+                    <th>Harga</th>
+                    <th>Status</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+    `;
+
+    filtered.forEach(booking => {
+        const statusClass = booking.status.toLowerCase();
+        const statusText = booking.status;
+
+        let actions = '';
+        if (booking.status === 'Pending') {
+            actions = `
+                <button class="action-btn confirm" onclick="updateStatus(${booking.booking_id}, 'Lunas')">Konfirmasi</button>
+                <button class="action-btn cancel" onclick="updateStatus(${booking.booking_id}, 'Batal')">Batal</button>
+            `;
+        }
+        actions += `<button class="action-btn delete" onclick="deleteBooking(${booking.booking_id})">Hapus</button>`;
+
+        html += `
+            <tr>
+                <td>#${booking.booking_id}</td>
+                <td>
+                    <div style="font-weight: 600;">${booking.nama_pemesan}</div>
+                    <div style="font-size: 12px; color: #6b7280;">${booking.email || '-'}</div>
+                    <div style="font-size: 12px; color: #6b7280;">${booking.no_hp || '-'}</div>
+                </td>
+                <td>
+                    <div style="font-weight: 600;">${booking.nama_lapangan}</div>
+                    <div style="font-size: 12px; color: #6b7280;">${booking.lokasi}</div>
+                </td>
+                <td>
+                    <div>${formatDate(booking.tanggal)}</div>
+                    <div style="font-size: 12px; color: #6b7280;">${booking.jam}</div>
+                </td>
+                <td style="font-weight: 600;">Rp ${formatNumber(booking.total_harga)}</td>
+                <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                <td>${actions}</td>
+            </tr>
+        `;
+    });
+
+    html += '</tbody></table>';
+    container.innerHTML = html;
+}
+
+function updateStatus(id, status) {
+    fetch(`/api/admin/bookings/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            showToast('Status berhasil diubah');
+            loadStats();
+            loadBookings();
+        } else {
+            showToast(data.message || 'Gagal mengubah status', true);
+        }
+    })
+    .catch(err => {
+        console.error(err);
+        showToast('Terjadi kesalahan', true);
+    });
+}
+
+function deleteBooking(id) {
+    if (!confirm('Yakin ingin menghapus booking ini?')) return;
+
+    fetch(`/api/admin/bookings/${id}`, {
+        method: 'DELETE'
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            showToast('Booking berhasil dihapus');
+            loadStats();
+            loadBookings();
+        } else {
+            showToast(data.message || 'Gagal menghapus booking', true);
+        }
+    })
+    .catch(err => {
+        console.error(err);
+        showToast('Terjadi kesalahan', true);
+    });
+}
+
+// ============================
+// COURTS
+// ============================
+
+let allCourts = [];
+
+function loadCourts() {
+    fetch('/api/admin/courts')
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                allCourts = data.courts;
+                renderCourts();
+            }
+        })
+        .catch(err => {
+            console.error('Error loading courts:', err);
+            document.getElementById('courtsContainer').innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-state-icon">⚠️</div>
+                    <div class="empty-state-text">Gagal memuat data lapangan</div>
+                </div>
+            `;
+        });
+}
+
+function renderCourts() {
+    const container = document.getElementById('courtsContainer');
+
+    if (allCourts.length === 0) {
+        container.innerHTML = `
+            <div class="empty-state">
+                <div class="empty-state-icon">📭</div>
+                <div class="empty-state-text">Belum ada lapangan</div>
+            </div>
+        `;
+        return;
+    }
+
+    let html = `
+        <table class="court-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nama Lapangan</th>
+                    <th>Lokasi</th>
+                    <th>Harga/Jam</th>
+                    <th>Status Booking</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+    `;
+
+    allCourts.forEach(court => {
+        const isFull = court.is_full || false;
+        const statusClass = isFull ? 'full' : 'available';
+        const statusText = isFull ? 'Penuh' : 'Tersedia';
+        const bookedSlots = court.booked_slots || 0;
+
+        html += `
+            <tr>
+                <td>#${court.id}</td>
+                <td>
+                    <div style="font-weight: 600;">${court.nama}</div>
+                </td>
+                <td>
+                    <div>${court.lokasi}</div>
+                </td>
+                <td style="font-weight: 600;">Rp ${formatNumber(court.harga)}</td>
+                <td>
+                    <span class="court-status ${statusClass}">
+                        <span class="status-dot"></span>
+                        ${statusText}
+                        ${bookedSlots > 0 ? ' · ' + bookedSlots + ' terbooked' : ''}
+                    </span>
+                </td>
+                <td>
+                    <button class="action-btn delete-court" onclick="deleteCourt(${court.id}, '${court.nama.replace(/'/g, "\\'")}')">Hapus</button>
+                </td>
+            </tr>
+        `;
+    });
+
+    html += '</tbody></table>';
+    container.innerHTML = html;
+}
+
+function showAddCourtModal() {
+    document.getElementById('addCourtModal').classList.add('show');
+    document.getElementById('addCourtForm').reset();
+}
+
+function addCourt(event) {
+    event.preventDefault();
+
+    const formData = new FormData();
+    formData.append('nama', document.getElementById('courtName').value);
+    formData.append('lokasi', document.getElementById('courtLocation').value);
+    formData.append('harga', parseInt(document.getElementById('courtPrice').value));
+
+    const imageFile = document.getElementById('courtImage').files[0];
+    if (imageFile) {
+        formData.append('gambar', imageFile);
+    }
+
+    fetch('/api/admin/courts', {
+        method: 'POST',
+        body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            showToast('Lapangan berhasil ditambahkan');
+            closeModal('addCourtModal');
+            loadCourts();
+        } else {
+            showToast(data.message || 'Gagal menambahkan lapangan', true);
+        }
+    })
+    .catch(err => {
+        console.error(err);
+        showToast('Terjadi kesalahan', true);
+    });
+}
+
+function deleteCourt(id, name) {
+    if (!confirm(`Yakin ingin menghapus "${name}"? Lapangan yang masih memiliki booking aktif tidak dapat dihapus.`)) return;
+
+    fetch(`/api/admin/courts/${id}`, {
+        method: 'DELETE'
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            showToast('Lapangan berhasil dihapus');
+            loadCourts();
+        } else {
+            showToast(data.message || 'Gagal menghapus lapangan', true);
+        }
+    })
+    .catch(err => {
+        console.error(err);
+        showToast('Terjadi kesalahan', true);
+    });
+}
+
+// ============================
+// UTILITY FUNCTIONS
+// ============================
+
+function showToast(message, isError = false) {
+    const toast = document.getElementById('toast');
+    toast.textContent = message;
+    toast.className = 'toast' + (isError ? ' error' : '');
+    setTimeout(() => toast.classList.add('show'), 10);
+    setTimeout(() => toast.classList.remove('show'), 3000);
+}
+
+function formatNumber(num) {
+    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+}
+
+function formatDate(dateStr) {
+    if (!dateStr) return '-';
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    return new Date(dateStr).toLocaleDateString('id-ID', options);
+}
+
+function closeModal(modalId) {
+    document.getElementById(modalId).classList.remove('show');
+}
+
+function logoutAdmin() {
+    localStorage.removeItem('isAdmin');
+    localStorage.removeItem('adminUser');
+    window.location.href = '/';
+}
+
+</script>
+
+</body>
