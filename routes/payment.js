@@ -1,6 +1,10 @@
 const express = require("express");
 const router = express.Router();
-const db = require("../config/db");
+
+const {
+    CART,
+    BOOKINGS
+} = require("../public/js/data");
 
 router.post("/", (req, res) => {
 
@@ -8,106 +12,39 @@ router.post("/", (req, res) => {
         total_harga,
         metode_pembayaran
     } = req.body;
+    console.log("CART PAYMENT =", CART);
+    console.log("BODY =", req.body);
+    console.log("CART =", CART);
+    if (CART.length === 0) {
+        return res.status(400).json({
+            success: false,
+            message: "Cart kosong"
+        });
+    }
 
-    db.query(
-        "SELECT * FROM cart",
-        (err, cartData) => {
+    CART.forEach(item => {
 
-            if (err) {
-                return res.status(500).json(err);
-            }
+        BOOKINGS.push({
+            id: Date.now() + Math.random(),
+            lapangan_id: item.courtId,
+            jadwal_id: item.slotId,
+            total_harga,
+            metode_pembayaran,
+            created_at: new Date()
+        });
 
-            if (cartData.length === 0) {
-                return res.status(400).json({
-                    success: false,
-                    message: "Cart kosong"
-                });
-            }
+    });
 
-            db.query(
-                `INSERT INTO booking
-                (metode_pembayaran, total_harga)
-                VALUES (?, ?)`,
-                [
-                    metode_pembayaran,
-                    total_harga
-                ],
-                (err, bookingResult) => {
+    CART.length = 0;
 
-                    if (err) {
-                        return res.status(500).json(err);
-                    }
-
-                    const bookingId = bookingResult.insertId;
-
-                    let selesai = 0;
-
-                    cartData.forEach(item => {
-
-                        db.query(
-                            `INSERT INTO booking_detail
-                            (booking_id, lapangan_id, jadwal_id)
-                            VALUES (?, ?, ?)`,
-                            [
-                                bookingId,
-                                item.lapangan_id,
-                                item.jadwal_id
-                            ],
-                            (err) => {
-
-                                if (err) {
-                                    return res.status(500).json(err);
-                                }
-
-                                selesai++;
-
-                                if (selesai === cartData.length) {
-
-                                    db.query(
-                                        "DELETE FROM cart",
-                                        (err) => {
-
-                                            if (err) {
-                                                return res.status(500).json(err);
-                                            }
-
-                                            res.json({
-                                                success: true
-                                            });
-
-                                        }
-                                    );
-
-                                }
-
-                            }
-                        );
-
-                    });
-
-                }
-            );
-
-        }
-    );
+    res.json({
+        success: true
+    });
 
 });
 
 router.get("/", (req, res) => {
-
-    db.query(
-        "SELECT * FROM booking ORDER BY id DESC",
-        (err, result) => {
-
-            if (err) {
-                return res.status(500).json(err);
-            }
-
-            res.json(result);
-
-        }
-    );
-
+    res.json(BOOKINGS);
 });
 
 module.exports = router;

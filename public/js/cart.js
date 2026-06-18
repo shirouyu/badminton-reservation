@@ -15,27 +15,33 @@ async function addToCart(courtId, slot) {
     return false;
   }
 
-  // simpan ke database
-  await fetch("/api/cart", {
+  const res = await fetch("/api/cart", {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
     },
     body: JSON.stringify({
-      courtId: courtId,
+      courtId,
       slotId: slot.id
     })
   });
 
-  const court = COURTS.find((c) => c.id === courtId);
+  const data = await res.json();
+
+  if (!data.success) {
+    showToast(data.message || "Gagal menambah ke keranjang");
+    return false;
+  }
+
+  const court = COURTS.find(c => c.id === courtId);
 
   cart.push({
-    cartId: `${courtId}-${slot.id}-${Date.now()}`,
+    cartId: data.id,
     courtId,
     courtName: court.name,
     courtTag: court.tag,
     slot,
-    price: court.price,
+    price: court.price
   });
 
   updateCartBadge();

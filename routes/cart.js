@@ -1,65 +1,59 @@
+// ============================================================
+//  routes/cart.js
+// ============================================================
 const express = require("express");
 const router = express.Router();
-const db = require("../config/db");
 
-router.post("/", (req, res) => {
+const { CART } = require("../public/js/data");
 
-    const {
-        courtId,
-        slotId
-    } = req.body;
-
-    if (!courtId || !slotId) {
-        return res.status(400).json({
-            success: false,
-            message: "Data tidak lengkap"
-        });
-    }
-
-    console.log("COURT ID =", courtId);
-    console.log("SLOT ID =", slotId);
-
-    db.query(
-        `INSERT INTO cart
-        (lapangan_id, jadwal_id)
-        VALUES (?, ?)`,
-        [
-            courtId,
-            slotId
-        ],
-        (err, result) => {
-
-            if (err) {
-                console.log(err);
-                return res.status(500).json(err);
-            }
-
-            res.json({
-                success: true
-            });
-
-        }
-    );
-
+// GET /api/cart
+router.get("/", (req, res) => {
+  res.json(CART);
 });
 
+// POST /api/cart — add item
+router.post("/", (req, res) => {
+  const { courtId, slotId } = req.body;
+
+  if (!courtId || !slotId) {
+    return res.status(400).json({
+      success: false,
+      message: "courtId dan slotId harus diisi"
+    });
+  }
+
+  const newId = CART.length > 0 ? Math.max(...CART.map(x => x.id)) + 1 : 1;
+
+  CART.push({
+    id: newId,
+    courtId,
+    slotId,
+    created_at: new Date()
+  });
+
+  res.json({ success: true, id: newId });
+});
+
+// DELETE /api/cart — clear all
 router.delete("/", (req, res) => {
+  CART.splice(0, CART.length);
+  res.json({ success: true });
+});
 
-    db.query(
-        "DELETE FROM cart",
-        (err) => {
+// DELETE /api/cart/:id — remove single item
+router.delete("/:id", (req, res) => {
+  const id = Number(req.params.id);
+  const index = CART.findIndex(item => item.id === id);
 
-            if (err) {
-                return res.status(500).json(err);
-            }
+  if (index === -1) {
+    return res.status(404).json({
+      success: false,
+      message: "Item tidak ditemukan"
+    });
+  }
 
-            res.json({
-                success: true
-            });
-
-        }
-    );
-
+  CART.splice(index, 1);
+  res.json({ success: true });
 });
 
 module.exports = router;

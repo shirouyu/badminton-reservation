@@ -177,10 +177,14 @@ function submitPayment() {
       metode_pembayaran: selected.value
     })
   })
-  .then(res => {
-    console.log("STATUS:", res.status);
-    return res.json();
-  })
+  .then(async res => {
+  const data = await res.json();
+
+  console.log("STATUS:", res.status);
+  console.log("RESPONSE:", data);
+
+  return data;
+})
   .then(data => {
     if (data.success) {
       fetch("/api/cart", {

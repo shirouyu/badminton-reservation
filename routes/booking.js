@@ -1,48 +1,29 @@
+// ============================================================
+//  routes/booking.js
+// ============================================================
 const express = require("express");
 const router = express.Router();
-const db = require("../config/db");
 
+const { BOOKINGS } = require("../public/js/data");
+
+// GET /api/booking
 router.get("/", (req, res) => {
-
-    db.query(`
-        SELECT
-            b.id,
-            b.metode_pembayaran,
-            b.total_harga,
-            b.created_at,
-            bd.lapangan_id,
-            bd.jadwal_id
-        FROM booking b
-        JOIN booking_detail bd
-        ON b.id = bd.booking_id
-        ORDER BY b.id DESC
-    `,
-    (err, result) => {
-
-        if(err){
-            return res.status(500).json(err);
-        }
-
-        res.json(result);
-    });
-
+  res.json(BOOKINGS);
 });
 
-router.get("/booked", (req,res)=>{
+// GET /api/booking/booked — returns list of booked jadwal_ids
+router.get("/booked", (req, res) => {
+  const booked = [];
 
-    db.query(
-        "SELECT jadwal_id FROM booking_detail",
-        (err,result)=>{
+  BOOKINGS.forEach(booking => {
+    if (booking.details && Array.isArray(booking.details)) {
+      booking.details.forEach(detail => {
+        booked.push({ jadwal_id: detail.jadwal_id });
+      });
+    }
+  });
 
-            if(err){
-                return res.status(500).json(err);
-            }
-
-            res.json(result);
-
-        }
-    );
-
+  res.json(booked);
 });
 
 module.exports = router;
